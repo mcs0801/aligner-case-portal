@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Live demo · Aligner Case Portal</title>
+<meta name="description" content="Interactive demo of a white-label case portal for clear aligner brands. Sample data only.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<meta name="theme-color" content="#0b7a78">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://mcs0801.github.io/aligner-case-portal/demo.html">
+<meta property="og:site_name" content="Aligner Case Portal">
+<meta property="og:image" content="https://mcs0801.github.io/aligner-case-portal/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta property="og:title" content="Live demo · Aligner Case Portal">
+<meta property="og:description" content="Click through a white-label case portal for clear aligner brands, as a dentist and as the brand. Sample data only.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Demo of the product itself: the portal wears the sample brand's colour (--acc),
+   not ours, to show white-label. Our teal only appears in the thin demo bar. */
+:root{color-scheme:light;--acc:#6d4aff;--ink:#0b1f3a;--soft:#5b6a80;--line:#e3e9f0;--bg:#f5f8fb;--panel:#fff;--ok:#15803d;--warn:#b45309;--bad:#c9354a;--teal:#0b7a78}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%}
+body{font:15px/1.5 Figtree,system-ui,sans-serif;color:var(--ink);background:var(--bg);display:flex;flex-direction:column;min-height:100vh}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:inherit}
+.demobar{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;padding:8px max(2vw,14px);background:#0b1f3a;color:#dbe7f2;font-size:13.5px}
+.demobar b{color:#fff;font-weight:600}
+.demobar .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#3cc8c1;margin-right:8px;vertical-align:1px}
+.demobar nav{display:flex;gap:10px;align-items:center}
+.demobar a{text-decoration:none;color:#dbe7f2;padding:0 12px;min-height:40px;display:inline-flex;align-items:center;border-radius:8px}
+.demobar a:hover{background:rgba(255,255,255,.08)}
+.demobar a.cta{background:var(--teal);color:#fff;font-weight:600}
+.shell{flex:1;display:grid;grid-template-columns:248px minmax(0,1fr)}
+aside{background:var(--panel);border-right:1px solid var(--line);padding:18px 14px;display:flex;flex-direction:column;gap:18px}
+.blogo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:17px;padding:0 6px}
+.blogo i{width:32px;height:32px;border-radius:9px;background:var(--acc);display:grid;place-items:center;color:#fff;font-style:normal;font-size:15px}
+.role{display:grid;grid-template-columns:1fr 1fr;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px}
+.role button{border:0;background:transparent;border-radius:8px;min-height:36px;font-weight:600;font-size:13.5px;cursor:pointer;color:var(--soft)}
+.role button[aria-pressed=true]{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(11,31,58,.12)}
+.nav{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.nav button{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;text-align:left;padding:9px 10px;border-radius:9px;cursor:pointer;font-weight:500;color:var(--soft)}
+.nav button svg{width:18px;height:18px;flex:none}
+.nav button:hover{background:var(--bg);color:var(--ink)}
+.nav button[aria-current=page]{background:color-mix(in srgb,var(--acc) 10%,#fff);color:var(--acc);font-weight:600}
+.nav .count{margin-left:auto;background:var(--acc);color:#fff;border-radius:999px;font-size:12px;padding:1px 8px;font-weight:700}
+.who{margin-top:auto;display:flex;gap:10px;align-items:center;padding:10px 6px 0;border-top:1px solid var(--line);font-size:13.5px}
+.who i{width:34px;height:34px;border-radius:50%;background:#e8eef5;display:grid;place-items:center;font-style:normal;font-weight:700;font-size:13px;color:var(--soft);flex:none}
+.who small{display:block;color:var(--soft);font-size:12.5px}
+main{padding:24px clamp(16px,3vw,36px) 40px;max-width:1180px;width:100%}
+.ph{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between;margin-bottom:18px}
+.ph h1{font-size:26px;letter-spacing:-.02em;margin:0;line-height:1.15}
+.ph p{margin:4px 0 0;color:var(--soft)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:14px}
+.pad{padding:20px clamp(16px,2.4vw,26px)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:0 18px;border-radius:10px;border:1px solid var(--acc);background:var(--acc);color:#fff;font-weight:600;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.ghost{background:var(--panel);color:var(--ink);border-color:var(--line)}
+.btn.sm{min-height:34px;padding:0 12px;font-size:13.5px;border-radius:8px}
+.btn:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid color-mix(in srgb,var(--acc) 55%,transparent);outline-offset:2px}
+/* stepper */
+.stepper{list-style:none;margin:0 0 16px;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+.stepper button{width:100%;border:0;background:transparent;cursor:pointer;text-align:left;padding:4px 0 10px;min-height:44px;display:grid;gap:8px;color:var(--soft);font-size:13px;font-weight:600}
+.stepper button::before{content:"";height:4px;border-radius:4px;background:var(--line)}
+.stepper button.done::before,.stepper button.on::before{background:var(--acc)}
+.stepper button.on{color:var(--ink)}
+.stepper span{display:flex;gap:6px;align-items:center}
+.stepper em{font-style:normal}
+.stepper b{font-weight:700}
+.wiz h2{margin:0 0 4px;font-size:20px;letter-spacing:-.01em}
+.sub{color:var(--soft);margin:0 0 18px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+label.f{display:grid;gap:6px;font-size:13.5px;font-weight:600}
+input,select,textarea{background:#fff;border:1px solid var(--line);border-radius:9px;padding:10px 12px;min-height:44px;width:100%;font-size:15px}
+input:focus,select:focus,textarea:focus{border-color:var(--acc);outline:none;box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 18%,transparent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:7px 14px;background:#fff;cursor:pointer;font-weight:500;font-size:14px;min-height:38px}
+.chip[aria-pressed=true]{background:color-mix(in srgb,var(--acc) 10%,#fff);border-color:var(--acc);color:var(--acc);font-weight:600}
+.drop{border:1.5px dashed #c9d5e2;border-radius:12px;padding:16px;display:grid;gap:12px;background:#fbfcfe}
+.file{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 12px;align-items:center;font-size:14px}
+.file .ic{width:34px;height:34px;border-radius:8px;background:#eef2f7;display:grid;place-items:center;font-size:10.5px;font-weight:800;color:var(--soft);grid-row:span 2}
+.file small{color:var(--soft)}
+.meter{height:5px;background:var(--line);border-radius:5px;overflow:hidden;grid-column:2/-1}
+.meter b{display:block;height:100%;background:var(--acc)}
+.alert{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-radius:10px;background:#fdf0f2;color:var(--bad);font-weight:600;font-size:14px}
+.okmsg{padding:10px 12px;border-radius:10px;background:#ecf8f0;color:var(--ok);font-weight:600;font-size:14px}
+.pk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.pkg{border:1px solid var(--line);border-radius:12px;padding:16px;background:#fff;text-align:left;cursor:pointer;display:grid;gap:4px}
+.pkg[aria-pressed=true]{border-color:var(--acc);box-shadow:0 0 0 2px var(--acc) inset}
+.pkg b{font-size:15px}.pkg strong{font-size:24px;letter-spacing:-.02em}.pkg small{color:var(--soft)}
+.foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-top:22px;padding-top:16px;border-top:1px solid var(--line)}
+.saved{font-size:13px;color:var(--soft);display:flex;align-items:center;gap:6px}
+.saved::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--ok)}
+dl.rv{display:grid;grid-template-columns:140px minmax(0,1fr);margin:0;border-top:1px solid var(--line)}
+dl.rv dt,dl.rv dd{margin:0;padding:11px 0;border-bottom:1px solid var(--line)}
+dl.rv dt{color:var(--soft);font-weight:600;font-size:14px}
+.tl{list-style:none;margin:0;padding:0}
+.tl li{display:grid;grid-template-columns:22px minmax(0,1fr) auto;gap:12px;padding:10px 0;align-items:center;position:relative}
+.tl li i{width:12px;height:12px;border-radius:50%;background:var(--line);justify-self:center;position:relative;z-index:1}
+.tl li:not(:last-child)::after{content:"";position:absolute;left:10px;top:28px;bottom:-8px;width:2px;background:var(--line)}
+.tl li.done i{background:var(--ok)}.tl li.now i{background:var(--acc);box-shadow:0 0 0 4px color-mix(in srgb,var(--acc) 22%,transparent)}
+.tl time{color:var(--soft);font-size:13px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px}
+.kpi{padding:16px 18px}
+.kpi span{color:var(--soft);font-size:13.5px}
+.kpi b{display:block;font-size:28px;letter-spacing:-.02em;font-weight:800;line-height:1.2;margin-top:2px}
+.kpi small{color:var(--ok);font-weight:600;font-size:12.5px}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--soft);font-size:12.5px;text-transform:uppercase;letter-spacing:.04em;padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.id{font-weight:700}
+.st{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:999px;font-size:12.5px;font-weight:700;background:#eef2f7;color:var(--soft)}
+.st::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.st.new{background:#efeaff;color:#5b3ae0}
+.st.ready{background:#fff4e5;color:var(--warn)}
+.st.prod{background:#e8f1fd;color:#1d5fbf}
+.st.ship,.st.paid{background:#e8f6ee;color:var(--ok)}
+.st.over{background:#fdecef;color:var(--bad)}
+.cols{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:16px;align-items:start}
+.h3{font-size:16px;margin:0;padding:16px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.list{list-style:none;margin:0;padding:6px 18px 12px}
+.list li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+.list li:last-child{border-bottom:0}
+.list small{color:var(--soft)}
+.swatches{display:flex;flex-wrap:wrap;gap:10px}
+.sw{width:44px;height:44px;border-radius:12px;border:3px solid #fff;box-shadow:0 0 0 1px var(--line);cursor:pointer}
+.sw[aria-pressed=true]{box-shadow:0 0 0 2px var(--ink)}
+.preview{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.preview .top{background:var(--acc);color:#fff;padding:14px 16px;font-weight:700;display:flex;gap:10px;align-items:center}
+.preview .top i{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.25);display:grid;place-items:center;font-style:normal}
+.preview .body{padding:16px;display:grid;gap:10px;font-size:14px;color:var(--soft)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:#0b1f3a;color:#fff;padding:12px 18px;border-radius:12px;font-weight:600;font-size:14px;opacity:0;transition:.25s;pointer-events:none;box-shadow:0 12px 30px -10px rgba(0,0,0,.4);max-width:calc(100vw - 32px)}
+.toast.show{opacity:1;transform:translateX(-50%)}
+.tip{margin-top:14px;font-size:13px;color:var(--soft)}
+.show-s{display:none}
+@media(max-width:640px){
+ .card table thead{display:none}
+ .card table,.card tbody,.card tr,.card td{display:block;width:100%}
+ .card tr{padding:12px 16px;border-bottom:1px solid var(--line)}
+ .card tr:last-child{border-bottom:0}
+ .card td{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:4px 0;border:0;white-space:normal;text-align:right}
+ .card td::before{content:attr(data-label);color:var(--soft);font-size:13px;font-weight:600;text-align:left}
+ .card td.id{font-size:15.5px;padding-bottom:6px}
+ .card td.id::before{content:none}
+ .card td:empty{display:none}
+ .card td:not([data-label])::before,.card td[data-label=""]::before{content:none}
+ .card td:not([data-label]),.card td[data-label=""]{justify-content:flex-end;padding-top:8px}
+ .kpi{padding:14px}.kpi b{font-size:22px}
+}
+@media(max-width:560px){.demobar .hide-s{display:none}.show-s{display:inline}.demobar{padding:6px 12px}}
+@media(max-width:980px){.cols{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:820px){
+ .shell{grid-template-columns:minmax(0,1fr)}
+ aside{border-right:0;border-bottom:1px solid var(--line);padding:12px 14px;gap:10px}
+ .nav{grid-auto-flow:column;grid-auto-columns:max-content;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 85%,transparent);mask-image:linear-gradient(90deg,#000 85%,transparent);padding-right:24px}
+ .nav::-webkit-scrollbar{display:none}
+ .nav button{padding:9px 12px}
+ .blogo{font-size:16px}
+ main{padding-top:18px}
+ .ph h1{font-size:22px}
+ .foot>span:last-child{flex:1;justify-content:flex-end}
+ .who{display:none}
+ .stepper em{display:none}
+ .pk{grid-template-columns:minmax(0,1fr)}
+}
+@media(max-width:560px){.grid2{grid-template-columns:minmax(0,1fr)}dl.rv{grid-template-columns:minmax(0,1fr)}dl.rv dt{border-bottom:0;padding-bottom:0}}
+@media(prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="demobar">
+  <span><span class="dot"></span><b>Live demo</b><span class="hide-s"> · Sample brand and patients. Nothing you enter is saved.</span><span class="show-s"> · Sample data</span></span>
+  <nav><a href="index.html">← <span class="hide-s">Back to website</span><span class="show-s">Website</span></a><a class="cta" href="https://wa.me/923062389897?text=Hi%20Waheed%2C%20I%20tried%20the%20Aligner%20Case%20Portal%20demo%20and%20would%20like%20to%20see%20it%20with%20our%20branding." target="_blank" rel="noopener">Book a demo</a></nav>
+</div>
+
+<div class="shell">
+  <aside>
+    <div class="blogo"><i id="bInit">S</i><span id="bName">SmileLine</span></div>
+    <div class="role" role="group" aria-label="View as">
+      <button id="r-doc" aria-pressed="true">Dentist</button>
+      <button id="r-brand" aria-pressed="false">Brand admin</button>
+    </div>
+    <ul class="nav" id="nav"></ul>
+    <div class="who" id="who"></div>
+  </aside>
+  <main id="main"></main>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const ic={
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ folder:'<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+ receipt:'<path d="M6 3h12v18l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/>',
+ grid:'<path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/>',
+ brush:'<path d="M14 4l6 6-8 8H6v-6z"/><path d="M4 20h4"/>',
+ users:'<path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM21 19v-1a4 4 0 0 0-3-3.9M15 4.1a3 3 0 0 1 0 5.8"/>'
+};
+const svg=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic[n]}</svg>`;
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2200)};
+
+/* shared sample data */
+let brand={name:'SmileLine',acc:'#6d4aff'};
+const pkgs=[["Lite",600,"Up to 10 aligners per arch"],["Moderate",900,"Up to 20 aligners per arch"],["Comprehensive",1400,"Unlimited aligners, 2 refinements"]];
+const money=n=>'$'+n.toLocaleString('en-US');
+const cases=[
+ {id:"SL-1041",doc:"Dr Sara Khan",pt:"Ayesha Malik",pkg:"Lite",st:"Submitted",date:"20 Nov"},
+ {id:"SL-1039",doc:"Dr Omar Aziz",pt:"Mina Lee",pkg:"Comprehensive",st:"Plan ready",date:"18 Nov"},
+ {id:"SL-1037",doc:"Dr Sara Khan",pt:"Daniel Ross",pkg:"Moderate",st:"In production",date:"14 Nov"},
+ {id:"SL-1035",doc:"Dr Priya Nair",pt:"Hana Yusuf",pkg:"Lite",st:"Shipped",date:"9 Nov"},
+ {id:"SL-1034",doc:"Dr Omar Aziz",pt:"Leo Tan",pkg:"Moderate",st:"In production",date:"7 Nov"},
+ {id:"SL-1030",doc:"Dr Sara Khan",pt:"Noor Ahmed",pkg:"Comprehensive",st:"Shipped",date:"2 Nov"}
+];
+const invoices=[
+ {id:"INV-2207",doc:"Dr Omar Aziz",amt:1400,due:"28 Nov",st:"Sent"},
+ {id:"INV-2205",doc:"Dr Sara Khan",amt:900,due:"25 Nov",st:"Sent"},
+ {id:"INV-2204",doc:"Dr Sara Khan",amt:1400,due:"21 Nov",st:"Paid"},
+ {id:"INV-2198",doc:"Dr Priya Nair",amt:600,due:"12 Nov",st:"Overdue"}
+];
+const stCls={"Submitted":"new","Plan ready":"ready","In production":"prod","Shipped":"ship","Sent":"","Paid":"paid","Overdue":"over"};
+const pill=s=>`<span class="st ${stCls[s]||''}">${s}</span>`;
+const next={"Submitted":"Plan ready","Plan ready":"In production","In production":"Shipped"};
+const action={"Submitted":"Upload plan","Plan ready":"Mark approved","In production":"Mark shipped"};
+const ME="Dr Sara Khan";let seq=1042;
+
+let role='doc',page='new';
+const navs={
+ doc:[['new','New case','plus'],['cases','My cases','folder'],['inv','Invoices','receipt']],
+ brand:[['dash','Dashboard','grid'],['bcases','Cases','folder'],['dentists','Dentists','users'],['binv','Invoices','receipt'],['brand','Branding','brush']]
+};
+const drawNav=()=>{
+ const due=invoices.filter(i=>i.doc===ME&&i.st!=='Paid').length;
+ const act=cases.filter(c=>c.st==='Submitted'||c.st==='Plan ready').length;
+ $('#nav').innerHTML=navs[role].map(([k,l,i])=>{
+  const n=k==='inv'&&due?due:k==='bcases'&&act?act:0;
+  return `<li><button data-p="${k}" ${page===k?'aria-current="page"':''}>${svg(i)}${l}${n?`<span class="count">${n}</span>`:''}</button></li>`}).join('');
+ $('#who').innerHTML=role==='doc'?`<i>SK</i><div><b>Dr Sara Khan</b><small>Bright Dental, Dubai</small></div>`:`<i>AM</i><div><b>Adam Morgan</b><small>${brand.name} · Admin</small></div>`;
+};
+
+/* ---- dentist: new case wizard ---- */
+const steps=["Patient","Diagnosis","Records","Goals","Package","Review"];
+let w={cur:0,name:"Ali Hassan",dob:"1997-03-14",sex:"Male",clinic:"Bright Dental, Dubai",dx:["Crowding","Spacing"],notes:"Moderate upper crowding, mild lower spacing.",goals:["Upper arch","Lower arch","IPR allowed"],pkg:"Moderate",xray:false,done:null};
+const files=()=>[["STL","upper_arch.stl","18.4 MB",100],["STL","lower_arch.stl","17.9 MB",100],["ZIP","intraoral_photos.zip","6.2 MB",100],...(w.xray?[["JPG","panoramic_xray.jpg","2.1 MB",100]]:[])];
+const wbody={
+ 0:()=>`<h2>Patient details</h2><p class="sub">Who is this case for?</p><div class="grid2">
+  <label class="f">Full name<input data-k="name" value="${w.name}"></label>
+  <label class="f">Date of birth<input type="date" data-k="dob" value="${w.dob}"></label>
+  <label class="f">Sex<select data-k="sex">${["Male","Female"].map(o=>`<option ${w.sex===o?'selected':''}>${o}</option>`).join('')}</select></label>
+  <label class="f">Clinic<input data-k="clinic" value="${w.clinic}"></label></div>`,
+ 1:()=>`<h2>Diagnosis</h2><p class="sub">Select everything that applies.</p><div class="chips">${["Crowding","Spacing","Overbite","Underbite","Crossbite","Open bite","Midline shift"].map(c=>`<button class="chip" data-dx="${c}" aria-pressed="${w.dx.includes(c)}">${c}</button>`).join('')}</div>
+  <label class="f" style="margin-top:16px">Clinical notes<textarea data-k="notes" rows="3">${w.notes}</textarea></label>`,
+ 2:()=>`<h2>Records</h2><p class="sub">Intraoral scans, photos and X-rays. Large uploads resume if the connection drops.</p><div class="drop">${files().map(f=>`<div class="file"><span class="ic">${f[0]}</span><span>${f[1]}</span><small>${f[2]}</small><div class="meter"><b style="width:${f[3]}%"></b></div></div>`).join('')}
+  ${w.xray?`<div class="okmsg">All required records are attached.</div>`:`<div class="alert">Required: panoramic X-ray <button class="btn sm" id="addx">Upload X-ray</button></div>`}</div>`,
+ 3:()=>`<h2>Treatment goals</h2><p class="sub">Your saved preferences are pre-filled. Change them for this case if needed.</p><div class="chips">${["Upper arch","Lower arch","IPR allowed","Attachments allowed","No extractions","Expansion allowed"].map(c=>`<button class="chip" data-g="${c}" aria-pressed="${w.goals.includes(c)}">${c}</button>`).join('')}</div>`,
+ 4:()=>`<h2>Choose a package</h2><p class="sub">Packages and prices are set by ${brand.name}.</p><div class="pk">${pkgs.map(p=>`<button class="pkg" data-pk="${p[0]}" aria-pressed="${w.pkg===p[0]}"><b>${p[0]}</b><strong>${money(p[1])}</strong><small>${p[2]}</small></button>`).join('')}</div>`,
+ 5:()=>w.done?`<h2>Case ${w.done} submitted</h2><p class="sub">${brand.name} will upload a treatment plan for your approval. You'll get an email at each step.</p><ol class="tl"><li class="done"><i></i>Submitted<time>Just now</time></li><li class="now"><i></i>In review by ${brand.name}<time>Now</time></li><li><i></i>Treatment plan ready for approval<time>Next</time></li><li><i></i>In production<time></time></li><li><i></i>Shipped to clinic<time></time></li></ol><p class="tip">Tip: switch to <b>Brand admin</b> on the left to see this case arrive.</p>`
+ :`<h2>Review and submit</h2><p class="sub">Check everything before sending to ${brand.name}.</p><dl class="rv"><dt>Patient</dt><dd>${w.name} · ${w.sex}</dd><dt>Diagnosis</dt><dd>${w.dx.join(', ')||'None selected'}</dd><dt>Records</dt><dd>${files().length} files ${w.xray?'':'<span class="st over">X-ray missing</span>'}</dd><dt>Goals</dt><dd style="white-space:normal">${w.goals.join(', ')}</dd><dt>Package</dt><dd>${w.pkg} · ${money(pkgs.find(p=>p[0]===w.pkg)[1])}</dd></dl>`
+};
+const pNew=()=>{
+ const last=w.cur===5;
+ return `<div class="ph"><div><h1>New case</h1><p>Patient: ${w.name}</p></div></div>
+ <div class="card pad wiz"><ol class="stepper">${steps.map((s,i)=>`<li><button data-s="${i}" class="${i<w.cur||w.done?'done':''} ${i===w.cur?'on':''}"><span><b>${i+1}</b><em>${s}</em></span></button></li>`).join('')}</ol>
+ ${wbody[w.cur]()}
+ <div class="foot"><span class="saved">${w.done?'Submitted':'Draft saved'}</span><span style="display:flex;gap:8px">${w.done?`<button class="btn ghost" data-p="cases">View my cases</button><button class="btn" id="again">Start another case</button>`:`<button class="btn ghost" id="back" ${w.cur===0?'disabled':''}>Back</button><button class="btn" id="next" ${last&&!w.xray?'disabled':''}>${last?'Submit case':'Continue'}</button>`}</span></div>
+ ${last&&!w.xray&&!w.done?`<p class="tip" style="text-align:right">Add the required X-ray in step 3 before submitting.</p>`:''}</div>`;
+};
+/* ---- dentist: cases + invoices ---- */
+const pCases=()=>{const mine=cases.filter(c=>c.doc===ME);
+ return `<div class="ph"><div><h1>My cases</h1><p>${mine.length} cases with ${brand.name}</p></div><button class="btn" data-p="new">${svg('plus').replace('<svg','<svg width="18" height="18"')} New case</button></div>
+ <div class="card scroll"><table><thead><tr><th>Case</th><th>Patient</th><th>Package</th><th>Submitted</th><th>Status</th><th></th></tr></thead><tbody>${mine.map(c=>`<tr><td class="id">${c.id}</td><td>${c.pt}</td><td>${c.pkg}</td><td>${c.date}</td><td>${pill(c.st)}</td><td>${c.st==='Plan ready'?`<button class="btn sm" data-approve="${c.id}">Review plan</button>`:''}</td></tr>`).join('')}</tbody></table></div>`};
+const pInv=()=>{const mine=invoices.filter(i=>i.doc===ME);const due=mine.filter(i=>i.st!=='Paid').reduce((a,b)=>a+b.amt,0);
+ return `<div class="ph"><div><h1>Invoices</h1><p>${due?money(due)+' due':'Nothing due'}</p></div></div>
+ <div class="card scroll"><table><thead><tr><th>Invoice</th><th>Amount</th><th>Due</th><th>Status</th><th></th></tr></thead><tbody>${mine.map(i=>`<tr><td class="id">${i.id}</td><td>${money(i.amt)}</td><td>${i.due}</td><td>${pill(i.st)}</td><td>${i.st!=='Paid'?`<button class="btn sm" data-pay="${i.id}">Pay now</button>`:'<span style="color:var(--soft);font-size:13px">Receipt sent</span>'}</td></tr>`).join('')}</tbody></table></div>
+ <p class="tip">Payments go straight to ${brand.name}'s own payment account.</p>`};
+/* ---- brand ---- */
+const pDash=()=>{const need=cases.filter(c=>c.st==='Submitted'||c.st==='Plan ready').length;const over=invoices.filter(i=>i.st==='Overdue').reduce((a,b)=>a+b.amt,0);const inv=invoices.reduce((a,b)=>a+b.amt,0)+24300;
+ return `<div class="ph"><div><h1>Good morning, Adam</h1><p>Here's ${brand.name} this month. ${need?`<a href="#" data-goto="bcases" style="color:var(--acc);font-weight:600">${need} cases need your action →</a>`:''}</p></div><button class="btn ghost" data-p="brand">Customise branding</button></div>
+ <div class="kpis"><div class="card kpi"><span>Cases this month</span><b>${cases.length+28}</b><small>↑ 12% vs last month</small></div><div class="card kpi"><span>Need your action</span><b>${need}</b></div><div class="card kpi"><span>Invoiced</span><b>${money(inv)}</b></div><div class="card kpi"><span>Overdue</span><b style="color:var(--bad)">${money(over)}</b></div></div>
+ <div class="cols"><div class="card"><h3 class="h3">Recent cases <button class="btn sm ghost" data-p="bcases">View all</button></h3><div class="scroll">${caseTable(cases.slice(0,5),true)}</div></div>
+ <div class="card"><h3 class="h3">Top dentists</h3><ul class="list"><li><span>Dr Sara Khan<br><small>Bright Dental, Dubai</small></span><b>14 cases</b></li><li><span>Dr Omar Aziz<br><small>Smile Studio, Abu Dhabi</small></span><b>11 cases</b></li><li><span>Dr Priya Nair<br><small>Pearl Clinic, Sharjah</small></span><b>7 cases</b></li></ul></div></div>`};
+const caseTable=(list,compact)=>compact?`<table><thead><tr><th>Case</th><th>Dentist</th><th>Patient</th><th>Status</th></tr></thead><tbody>${list.map(c=>`<tr><td class="id">${c.id}</td><td>${c.doc}</td><td>${c.pt}</td><td>${pill(c.st)}</td></tr>`).join('')}</tbody></table>`:`<table><thead><tr><th>Case</th><th>Dentist</th><th>Patient</th><th>Package</th><th>Status</th><th></th></tr></thead><tbody>${list.map(c=>`<tr><td class="id">${c.id}</td><td>${c.doc}</td><td>${c.pt}</td><td>${c.pkg}</td><td>${pill(c.st)}</td><td>${action[c.st]?`<button class="btn sm ghost" data-adv="${c.id}">${action[c.st]}</button>`:''}</td></tr>`).join('')}</tbody></table>`;
+const pBCases=()=>`<div class="ph"><div><h1>Cases</h1><p>Move cases forward. Dentists see every change instantly.</p></div></div><div class="card scroll">${caseTable(cases)}</div>`;
+const pDentists=()=>`<div class="ph"><div><h1>Dentists</h1><p>Dentists you've invited to your portal. They use it free.</p></div><button class="btn" id="invite">Invite dentist</button></div>
+ <div class="card scroll"><table><thead><tr><th>Dentist</th><th>Clinic</th><th>Cases</th><th>Last case</th><th>Status</th></tr></thead><tbody>
+ <tr><td class="id">Dr Sara Khan</td><td>Bright Dental, Dubai</td><td>14</td><td>Today</td><td><span class="st paid">Active</span></td></tr>
+ <tr><td class="id">Dr Omar Aziz</td><td>Smile Studio, Abu Dhabi</td><td>11</td><td>18 Nov</td><td><span class="st paid">Active</span></td></tr>
+ <tr><td class="id">Dr Priya Nair</td><td>Pearl Clinic, Sharjah</td><td>7</td><td>9 Nov</td><td><span class="st paid">Active</span></td></tr>
+ <tr><td class="id">Dr James Hart</td><td>Hart Orthodontics, London</td><td>0</td><td>–</td><td><span class="st">Invited</span></td></tr></tbody></table></div>`;
+const pBInv=()=>`<div class="ph"><div><h1>Invoices</h1><p>Created automatically when a dentist approves a treatment plan.</p></div><button class="btn ghost" id="remind">Send reminders</button></div>
+ <div class="card scroll"><table><thead><tr><th>Invoice</th><th>Dentist</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody>${invoices.map(i=>`<tr><td class="id">${i.id}</td><td>${i.doc}</td><td>${money(i.amt)}</td><td>${i.due}</td><td>${pill(i.st)}</td></tr>`).join('')}</tbody></table></div>`;
+const colors=[['#6d4aff','Violet'],['#0b7a78','Teal'],['#1d5fbf','Blue'],['#d6336c','Rose'],['#0b1f3a','Navy'],['#c2410c','Amber']];
+const pBrand=()=>`<div class="ph"><div><h1>Branding</h1><p>Make the portal look like your brand. Changes apply to every dentist.</p></div></div>
+ <div class="cols"><div class="card pad" style="display:grid;gap:18px"><label class="f">Brand name<input id="bn" value="${brand.name}" maxlength="24"></label>
+ <div class="f" style="display:grid;gap:8px;font-size:13.5px;font-weight:600">Brand colour<div class="swatches">${colors.map(([c,n])=>`<button class="sw" style="background:${c}" data-c="${c}" aria-label="${n}" aria-pressed="${brand.acc===c}"></button>`).join('')}</div></div>
+ <label class="f">Portal address<input id="addr" value="portal.${brand.name.toLowerCase().replace(/[^a-z0-9]/g,'')||'yourbrand'}.com" readonly></label>
+ <p class="tip" style="margin:0">Try it: pick a colour or rename the brand and watch the whole portal update.</p></div>
+ <div class="preview card"><div class="top"><i>${brand.name[0]||'B'}</i>${brand.name} Doctor Portal</div><div class="body"><span>What your dentists see when they sign in.</span><span><button class="btn sm">Submit a new case</button></span></div></div></div>`;
+
+const pages={new:pNew,cases:pCases,inv:pInv,dash:pDash,bcases:pBCases,dentists:pDentists,binv:pBInv,brand:pBrand};
+const label=()=>document.querySelectorAll('#main table').forEach(t=>{const h=[...t.querySelectorAll('thead th')].map(x=>x.textContent.trim());t.querySelectorAll('tbody tr').forEach(r=>[...r.children].forEach((c,i)=>c.setAttribute('data-label',h[i]||'')))});
+const render=()=>{drawNav();$('#main').innerHTML=pages[page]();label();const a=document.querySelector('#nav [aria-current]');if(a&&innerWidth<=820){const n=$('#nav');n.scrollLeft=a.offsetLeft-n.offsetLeft-12}document.title=`${brand.name} portal · Live demo`};
+const applyBrand=()=>{document.documentElement.style.setProperty('--acc',brand.acc);$('#bName').textContent=brand.name||'Your brand';$('#bInit').textContent=(brand.name||'B')[0].toUpperCase()};
+const setRole=r=>{role=r;page=r==='doc'?'new':'dash';$('#r-doc').setAttribute('aria-pressed',r==='doc');$('#r-brand').setAttribute('aria-pressed',r==='brand');render();window.scrollTo(0,0)};
+$('#r-doc').onclick=()=>setRole('doc');$('#r-brand').onclick=()=>setRole('brand');
+
+document.addEventListener('click',e=>{
+ const g=e.target.closest('[data-goto]');if(g){e.preventDefault();page=g.dataset.goto;render();return}
+ const b=e.target.closest('button');if(!b)return;
+ const d=b.dataset;
+ if(d.p){page=d.p;render();if(innerWidth<=820)document.querySelector('main').scrollIntoView({block:'start'});return}
+ if(d.s!==undefined&&!w.done){w.cur=+d.s;render();return}
+ if(b.id==='next'){if(w.cur<5){w.cur++;render()}else{const id='SL-'+(seq++);cases.unshift({id,doc:ME,pt:w.name,pkg:w.pkg,st:"Submitted",date:"Today"});w.done=id;render();toast(`Case ${id} sent to ${brand.name}`)}return}
+ if(b.id==='back'){w.cur=Math.max(0,w.cur-1);render();return}
+ if(b.id==='again'){w={...w,cur:0,name:"Fatima Raza",xray:false,done:null};render();return}
+ if(b.id==='addx'){w.xray=true;render();toast('X-ray uploaded');return}
+ if(d.dx){w.dx=w.dx.includes(d.dx)?w.dx.filter(x=>x!==d.dx):[...w.dx,d.dx];render();return}
+ if(d.g){w.goals=w.goals.includes(d.g)?w.goals.filter(x=>x!==d.g):[...w.goals,d.g];render();return}
+ if(d.pk){w.pkg=d.pk;render();return}
+ if(d.adv){const c=cases.find(x=>x.id===d.adv);const was=c.st;c.st=next[c.st];
+   if(was==='Plan ready'){const amt=pkgs.find(p=>p[0]===c.pkg)[1];invoices.unshift({id:'INV-'+(2208+invoices.length),doc:c.doc,amt,due:"6 Dec",st:"Sent"});toast(`${c.id} approved · invoice sent to ${c.doc}`)}
+   else toast(`${c.id} moved to ${c.st}`);render();return}
+ if(d.approve){const c=cases.find(x=>x.id===d.approve);c.st='In production';const amt=pkgs.find(p=>p[0]===c.pkg)[1];invoices.unshift({id:'INV-'+(2208+invoices.length),doc:ME,amt,due:"6 Dec",st:"Sent"});render();toast(`Plan approved · invoice ${money(amt)} created`);return}
+ if(d.pay){const i=invoices.find(x=>x.id===d.pay);i.st='Paid';render();toast(`${i.id} paid · ${money(i.amt)}`);return}
+ if(d.c){brand.acc=d.c;applyBrand();render();return}
+ if(b.id==='invite'){toast('Invitation email sent (demo)');return}
+ if(b.id==='remind'){toast('Reminders sent for unpaid invoices (demo)');return}
+ if(b.classList.contains('btn')&&b.closest('.preview')){toast('This is a preview');return}
+});
+document.addEventListener('input',e=>{
+ const k=e.target.dataset.k;if(k){w[k]=e.target.value;return}
+ if(e.target.id==='bn'){brand.name=e.target.value.trim()||'Your brand';applyBrand();const pv=document.querySelector('.preview .top');if(pv)pv.innerHTML=`<i>${brand.name[0]}</i>${brand.name} Doctor Portal`;const a=document.getElementById('addr');if(a)a.value='portal.'+(brand.name.toLowerCase().replace(/[^a-z0-9]/g,'')||'yourbrand')+'.com';drawNav()}
+});
+document.addEventListener('change',e=>{if(e.target.id==='bn')render()});
+applyBrand();render();
+}
+</script>
+</body>
+</html>
