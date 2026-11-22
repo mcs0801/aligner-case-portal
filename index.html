@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aligner Case Portal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE occasion: a product landing page for B2B dental buyers, calm and clinical
+   IDEA a dental lab Rx slip: ruled fields, case numbers, stamped statuses
+   PICTURE a live, clickable doctor portal (dentist + brand views) as the hero
+   COLOUR deep navy #0b1f3a + clinical teal #0b7a78 hero gradient, white app card, mint field #eef6f6, coral only for warnings
+   TYPE Figtree 800 display + Figtree text
+   LAYOUT laptop: title across top, prototype full width below; phone: title, prototype, sections stacked */
+:root{color-scheme:light dark;--bg:light-dark(#ffffff,#0b1220);--ink:light-dark(#0b1f3a,#e6edf5);--soft:light-dark(#53627a,#a3b1c2);--field:light-dark(#eef6f6,#102428);--panel:light-dark(#ffffff,#121c2b);--line:light-dark(#dde6ee,#24344a);--coral:light-dark(#c9354a,#f0707f);--blue:light-dark(#0b7a78,#3cc8c1);--deep:#0b1f3a;--ok:light-dark(#15803d,#4ade80);--warn:light-dark(#b45309,#f5a742);--hero:linear-gradient(135deg,#0b1f3a 0%,#0f3a55 55%,#0b7a78 100%)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 Figtree,system-ui,sans-serif;overflow-x:clip}
+a{color:var(--blue)}
+.band{padding-block:clamp(28px,4vw,64px);padding-left:max(5vw,16px);padding-right:max(5vw,16px)}
+.wrap{max-width:1240px;margin:0 auto}
+nav{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:center;justify-content:space-between;padding:16px max(5vw,16px);border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:22px;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.logo svg{width:28px;height:28px}
+nav .links{display:flex;flex-wrap:wrap;gap:6px 20px;font-size:15px}
+nav .links a{color:var(--ink);text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:10px;border:1px solid var(--ink);background:var(--ink);color:var(--bg);font:600 15px Figtree,sans-serif;text-decoration:none;cursor:pointer}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn:focus-visible,button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.hero{background:var(--field)}
+.hero h1{font-size:clamp(32px,4.6vw,52px);line-height:1.05;letter-spacing:-.02em;margin:0 0 14px;text-wrap:balance;max-width:20ch}
+.hero .lede{font-size:18px;max-width:60ch;margin:0 0 22px;color:var(--ink)}
+.cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:28px}
+.top{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-items:end}
+.facts{list-style:none;margin:0 0 28px;padding:0;display:grid;gap:14px}
+.facts li{border-top:2px solid var(--ink);padding-top:10px;font-size:15px;color:var(--soft)}
+.facts b{display:block;color:var(--ink);font-size:17px}
+@media(max-width:900px){.top{grid-template-columns:minmax(0,1fr)}.facts{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.facts{grid-template-columns:minmax(0,1fr)}}
+.note{font-size:13px;color:var(--soft)}
+.app{background:var(--panel);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 40px -24px rgba(16,32,60,.45);overflow:hidden}
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.brand i{width:30px;height:30px;border-radius:8px;background:#7c4dff;display:inline-block}
+.tabs{display:flex;gap:4px;background:var(--field);padding:4px;border-radius:10px}
+.tabs button{border:0;background:transparent;color:var(--ink);font:600 14px Figtree,sans-serif;min-height:38px;padding:0 14px;border-radius:8px;cursor:pointer}
+.tabs button[aria-selected=true]{background:var(--panel);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.view[hidden]{display:none}
+.view{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:460px}
+.side{border-right:1px solid var(--line);padding:16px}
+.side h4{margin:0 0 10px;font-size:13px;color:var(--soft);font-weight:600}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.steps li button{width:100%;text-align:left;border:0;background:transparent;color:var(--ink);font:500 15px Figtree,sans-serif;padding:9px 10px;border-radius:8px;cursor:pointer;display:flex;gap:10px;align-items:center}
+.steps li button em{font-style:normal}
+.steps li button span{width:24px;height:24px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:12px;flex:none}
+.steps li button.done span{background:var(--ok);border-color:var(--ok);color:#fff}
+.steps li button.on{background:var(--field)}
+.steps li button.on span{border-color:var(--blue);color:var(--blue)}
+.main{padding:20px clamp(16px,2.5vw,28px)}
+.main h3{margin:0 0 4px;font-size:22px;letter-spacing:-.01em}
+.sub{color:var(--soft);margin:0 0 18px;font-size:15px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+label.f{display:grid;gap:6px;font-size:14px;font-weight:600}
+input,select,textarea{font:16px Figtree,sans-serif;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-height:44px;width:100%}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:8px 14px;font:500 14px Figtree,sans-serif;background:var(--bg);color:var(--ink);cursor:pointer;min-height:40px}
+.chip[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.drop{border:2px dashed var(--line);border-radius:12px;padding:16px;display:grid;gap:10px}
+.file{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;font-size:14px}
+.meter{height:6px;background:var(--line);border-radius:6px;overflow:hidden;grid-column:1/-1}
+.meter b{display:block;height:100%;background:var(--blue);transition:width .6s}
+.miss{color:var(--coral);font-weight:600}
+.pk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pkg{border:1px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;background:var(--bg);text-align:left;color:var(--ink);font:inherit}
+.pkg[aria-pressed=true]{border:2px solid var(--blue);padding:13px}
+.pkg b{display:block;font-size:16px}.pkg em{font-style:normal;font-size:20px;font-weight:800;white-space:nowrap}
+.pkg small{display:block;color:var(--soft);font-size:13px}
+.foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.saved{font-size:13px;color:var(--ok)}
+.tl{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.tl li{display:grid;grid-template-columns:28px minmax(0,1fr) auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);align-items:center;font-size:15px}
+.tl li i{width:14px;height:14px;border-radius:50%;background:var(--line);justify-self:center}
+.tl li.done i{background:var(--ok)}.tl li.now i{background:var(--blue);box-shadow:0 0 0 4px color-mix(in srgb,var(--blue) 25%,transparent)}
+.tl time{color:var(--soft);font-size:13px;white-space:nowrap}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(9em,1fr));gap:10px;margin-bottom:16px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.kpi b{display:block;font-size:26px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.kpi span{font-size:13px;color:var(--soft)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-weight:600;color:var(--soft);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px;border-bottom:1px solid var(--line);vertical-align:middle}
+.st{display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;white-space:nowrap;background:var(--field)}
+.st.ready{background:color-mix(in srgb,var(--warn) 18%,transparent);color:var(--warn)}
+.st.prod{background:color-mix(in srgb,var(--blue) 16%,transparent);color:var(--blue)}
+.st.ship{background:color-mix(in srgb,var(--ok) 16%,transparent);color:var(--ok)}
+.st.new{background:color-mix(in srgb,var(--coral) 14%,transparent);color:var(--coral)}
+.mini{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;min-height:36px;padding:0 12px;font:600 13px Figtree,sans-serif;cursor:pointer;white-space:nowrap}
+h2{font-size:clamp(28px,3.4vw,40px);line-height:1.08;letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+.cols4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+.step-c{border-top:3px solid var(--ink);padding-top:14px}
+.step-c b{font-size:18px;display:block;margin-bottom:6px}
+.step-c p,.feat p{margin:0;color:var(--soft)}
+.feat{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px}
+.feat svg{width:40px;height:40px}
+.feat b{display:block;font-size:17px;margin-bottom:4px}
+.split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:start}
+.pain li{margin-bottom:10px}
+.price{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.plan{border:1px solid var(--line);border-radius:16px;padding:22px;display:grid;gap:10px;align-content:start}
+.plan.hl{border:2px solid var(--ink)}
+.plan .amt{font-size:36px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.plan .amt small{font-size:16px;font-weight:500;color:var(--soft)}
+.plan ul{margin:0;padding-left:18px;color:var(--soft)}
+.contact{background:var(--ink);color:var(--bg)}
+.contact a{color:var(--bg)}
+.contact .btn{background:var(--bg);color:var(--ink);border-color:var(--bg)}
+footer{padding:20px max(5vw,16px);font-size:14px;color:var(--soft);display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between}
+@media(max-width:900px){.cols4{grid-template-columns:repeat(2,minmax(0,1fr))}.price,.cols3{grid-template-columns:minmax(0,1fr)}.split{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:720px){.view{grid-template-columns:minmax(0,1fr)}.side{border-right:0;border-bottom:1px solid var(--line)}.steps{grid-auto-flow:column;grid-auto-columns:max-content;overflow-x:auto}.steps li button em{display:none}.pk{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.grid2,.cols4{grid-template-columns:minmax(0,1fr)}nav .links{display:none}table{font-size:13px}th,td{padding:8px 6px}}
+@media(prefers-reduced-motion:reduce){.meter b{transition:none}}
+
+/* palette v2 */
+.reach{display:grid;gap:10px;align-content:start}
+.btn.wa{gap:10px;min-height:52px;font-size:16px}.btn.wa svg{width:22px;height:22px;color:#25d366}
+.hint{margin:0;font-size:14px;color:rgba(255,255,255,.75)}
+.mail{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:6px 6px 6px 14px;margin-top:6px}
+.mail span{overflow-wrap:anywhere}
+.copy{border:0;background:rgba(255,255,255,.16);color:#fff;font:600 14px Figtree,sans-serif;min-height:40px;padding:0 14px;border-radius:8px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.26)}
+
+.btn{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 6px 16px -8px color-mix(in srgb,var(--blue) 70%,transparent);transition:transform .15s,box-shadow .15s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 10px 22px -10px color-mix(in srgb,var(--blue) 80%,transparent)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line);box-shadow:none}
+nav{background:var(--bg);position:sticky;top:0;z-index:5}
+.hero{background:light-dark(linear-gradient(180deg,#ffffff 0%,#eef6f6 70%,#e3f1f0 100%),linear-gradient(180deg,#0b1220 0%,#102428 100%));color:var(--ink)}
+.hero h1 em{font-style:normal;color:var(--blue)}
+.hero .facts li{border-top-color:var(--blue)}
+.app{color:var(--ink);box-shadow:0 2px 6px rgba(11,31,58,.06),0 40px 80px -40px rgba(11,122,120,.45)}
+.step-c{border-top-color:var(--blue)}
+.plan.hl{border-color:var(--blue);box-shadow:0 18px 40px -26px color-mix(in srgb,var(--blue) 60%,transparent)}
+.contact{background:var(--hero);color:#fff}
+.contact a{color:#fff}
+.contact .btn{background:#fff;color:var(--deep);border-color:#fff}
+.chip[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+@media(prefers-reduced-motion:reduce){.btn{transition:none}.btn:hover{transform:none}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="logo"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 4c-6.5 0-11 4.3-11 9.5 0 3.6 1.8 5.6 2.6 9.3.6 2.8 1.5 5.2 3.2 5.2 2.2 0 1.8-6 5.2-6s3 6 5.2 6c1.7 0 2.6-2.4 3.2-5.2.8-3.7 2.6-5.7 2.6-9.3C27 8.3 22.5 4 16 4z" fill="#0b7a78"/><path d="M10 12c2-2.5 9.5-3 12 0" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>Aligner Case Portal</div>
+  <div class="links"><a href="#how">How it works</a><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a></div>
+  <a class="btn" href="#contact">Book a demo</a>
+</nav>
+
+<header class="band hero">
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <h1>Your own branded case portal for <em>every dentist</em> you work with</h1>
+        <p class="lede">Aligner Case Portal gives clear aligner brands a white-label portal where dentists submit cases, upload scans, approve treatment plans and pay invoices. No more chasing files on email and WhatsApp.</p>
+        <div class="cta"><a class="btn" href="#contact">Book a demo</a><a class="btn ghost" href="#how">See how it works</a></div>
+      </div>
+      <ul class="facts"><li><b>Free for dentists</b>Your brand pays one monthly fee</li><li><b>Your branding</b>Logo, colours and domain</li><li><b>Paid to you</b>Dentists pay into your own account</li></ul>
+    </div>
+
+    <div class="app" id="proto">
+      <div class="bar">
+        <div class="brand"><i></i>SmileLine Doctor Portal</div>
+        <div class="tabs" role="tablist">
+          <button role="tab" id="t-doc" aria-selected="true">Dentist view</button>
+          <button role="tab" id="t-brand" aria-selected="false">Brand dashboard</button>
+        </div>
+      </div>
+      <div id="v-doc" class="view">
+        <aside class="side"><h4>New case · Ali Hassan</h4><ol class="steps" id="steps"></ol></aside>
+        <section class="main" id="stepBody"></section>
+      </div>
+      <div id="v-brand" class="view" hidden>
+        <aside class="side"><h4>SmileLine admin</h4><ol class="steps" id="bnav"></ol></aside>
+        <section class="main" id="brandBody"></section>
+      </div>
+    </div>
+    <p class="note" style="margin-top:10px">Interactive prototype. SmileLine, its dentists and patients are sample data.</p>
+  </div>
+</header>
+
+<section class="band">
+  <div class="wrap split">
+    <div>
+      <h2>Small aligner brands still run cases through inboxes</h2>
+      <p>Large aligner companies have their own doctor portals. Most growing brands still take cases by email and WhatsApp, track status in spreadsheets and chase invoices by hand.</p>
+    </div>
+    <ul class="pain">
+      <li><b>Missing records.</b> Scans arrive without photos, X-rays or a completed prescription.</li>
+      <li><b>No single status.</b> Dentists message to ask where their case is.</li>
+      <li><b>Slow approvals.</b> Treatment plans wait days for a reply.</li>
+      <li><b>Unpaid invoices.</b> Finance teams chase payments one dentist at a time.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="band" id="how" style="background:var(--field)">
+  <div class="wrap">
+    <h2>How it works</h2>
+    <div class="cols4" style="margin-top:24px">
+      <div class="step-c"><b>Launch your portal</b><p>Your logo, colours and domain. Set your packages, prices and currency, then invite your dentists.</p></div>
+      <div class="step-c"><b>Dentists submit cases</b><p>A guided form with autosave, scan uploads and a checklist, so every case arrives complete.</p></div>
+      <div class="step-c"><b>Plan, approve, produce</b><p>Upload the treatment plan. Dentists approve in one click and follow each status change.</p></div>
+      <div class="step-c"><b>Get paid</b><p>Invoices are created on approval. Dentists pay online into your own payment account.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="features">
+  <div class="wrap">
+    <h2>Everything a growing aligner brand needs</h2>
+    <div class="cols3" style="margin-top:24px" id="feats"></div>
+  </div>
+</section>
+
+<section class="band" id="pricing" style="background:var(--field)">
+  <div class="wrap">
+    <h2>Simple monthly pricing</h2>
+    <p class="sub">Dentists use the portal free. You pay one monthly fee for your brand.</p>
+    <div class="price">
+      <div class="plan"><b>Starter</b><div class="amt">$199<small> / month</small></div><ul><li>Up to 30 dentists</li><li>1 admin user</li><li>Your subdomain</li><li>Email notifications</li></ul></div>
+      <div class="plan hl"><b>Growth</b><div class="amt">$399<small> / month</small></div><ul><li>Up to 150 dentists</li><li>5 admin users</li><li>Your own custom domain</li><li>Priority support</li></ul></div>
+      <div class="plan"><b>Setup &amp; onboarding</b><div class="amt">from $500<small> one-time</small></div><ul><li>Branding and package setup</li><li>Import your dentists and open cases</li><li>Onboarding call for your team</li></ul></div>
+    </div>
+    <p class="note" style="margin-top:12px">Early pilot brands get a free first month.</p>
+  </div>
+</section>
+
+<section class="band contact" id="contact">
+  <div class="wrap split">
+    <div>
+      <h2>See it with your own branding</h2>
+      <p>Message us on WhatsApp and we'll walk you through the portal with your logo and packages. Built by Muhammad Waheed, a Top Rated Plus developer who has already delivered a live case portal for an aligner brand in Southeast Asia.</p>
+    </div>
+    <div class="reach">
+      <a class="btn wa" href="https://wa.me/923062389897?text=Hi%20Waheed%2C%20I%20saw%20Aligner%20Case%20Portal%20and%20would%20like%20a%20demo%20for%20our%20aligner%20brand." target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3z"/></svg>Chat on WhatsApp</a>
+      <p class="hint">Opens WhatsApp with a short message ready to send.</p>
+      <div class="mail"><span>waheedashraf06@gmail.com</span><button type="button" class="copy" id="copyMail">Copy email</button></div>
+      <p class="hint">Prefer email? <a href="mailto:waheedashraf06@gmail.com?subject=Aligner%20Case%20Portal%20demo">Open in your mail app</a></p>
+    </div>
+  </div>
+</section>
+<footer><span>Aligner Case Portal · White-label case portals for clear aligner brands</span><span>Your data stays separate from every other brand.</span></footer>
+
+<script>
+{
+const $=s=>document.querySelector(s);
+const icon=p=>`<svg viewBox="0 0 40 40" aria-hidden="true"><rect width="40" height="40" rx="10" fill="var(--field)"/><path d="${p}" fill="none" stroke="var(--blue)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const feats=[
+ ["Fully white-label","Your name, logo, colours and domain. Dentists never see ours.","M12 28V12h16v16zM16 20h8"],
+ ["Guided case form","Six short steps with autosave and saved preferences for each dentist.","M13 14h14M13 20h14M13 26h8"],
+ ["Large scan uploads","STL, PLY and OBJ scans, photos and X-rays, with resumable uploads.","M20 26V14M15 19l5-5 5 5M13 28h14"],
+ ["Status timeline","Submitted, plan ready, approved, in production, shipped. Always clear.","M12 20h16M14 16v8M20 16v8M26 16v8"],
+ ["Invoices and payments","Created on approval. Dentists pay online into your account.","M12 15h16v12H12zM12 19h16"],
+ ["Brand dashboard","New cases, plans waiting, overdue invoices and top dentists at a glance.","M13 27V19M20 27V13M27 27v-5"]
+];
+$('#feats').innerHTML=feats.map(f=>`<div class="feat">${icon(f[2])}<div><b>${f[0]}</b><p>${f[1]}</p></div></div>`).join('');
+
+/* dentist wizard */
+const steps=["Patient","Diagnosis","Records","Goals","Package","Review"];
+let cur=2,pkg="Moderate",goals=["Upper arch","Lower arch","IPR allowed"],submitted=false;
+const pkgs=[["Lite","$600","Up to 10 aligners"],["Moderate","$900","Up to 20 aligners"],["Comprehensive","$1,400","Unlimited aligners"]];
+const files=[["upper_arch.stl","18.4 MB",100],["lower_arch.stl","17.9 MB",100],["intraoral_photos.zip","6.2 MB",64]];
+const bodies={
+ 0:()=>`<h3>Patient details</h3><p class="sub">Who is this case for?</p><div class="grid2"><label class="f">Full name<input id="pn" value="Ali Hassan"></label><label class="f">Date of birth<input id="pd" value="14 Mar 1997"></label><label class="f">Gender<select id="pg"><option>Male</option><option>Female</option></select></label><label class="f">Clinic<input id="pc" value="Bright Dental, Downtown"></label></div>`,
+ 1:()=>`<h3>Diagnosis</h3><p class="sub">Select what applies.</p><div class="chips">${["Crowding","Spacing","Overbite","Crossbite","Open bite","Midline shift"].map((c,i)=>`<button class="chip" aria-pressed="${i<2}">${c}</button>`).join('')}</div><label class="f" style="margin-top:14px">Notes<textarea id="dn" rows="3">Moderate upper crowding, mild lower spacing.</textarea></label>`,
+ 2:()=>`<h3>Records</h3><p class="sub">Upload scans, photos and X-rays. Large files resume if the connection drops.</p><div class="drop">${files.map(f=>`<div class="file"><span>${f[0]} · ${f[1]}</span><span>${f[2]<100?f[2]+'%':'Uploaded'}</span><div class="meter"><b style="width:${f[2]}%"></b></div></div>`).join('')}<div class="miss">Still needed: panoramic X-ray</div><button class="mini" id="addx">Add panoramic X-ray</button></div>`,
+ 3:()=>`<h3>Treatment goals</h3><p class="sub">Your saved preferences are filled in.</p><div class="chips">${["Upper arch","Lower arch","IPR allowed","Attachments allowed","No extractions"].map(c=>`<button class="chip goal" aria-pressed="${goals.includes(c)}">${c}</button>`).join('')}</div>`,
+ 4:()=>`<h3>Choose a package</h3><p class="sub">Prices set by SmileLine.</p><div class="pk">${pkgs.map(p=>`<button class="pkg" data-p="${p[0]}" aria-pressed="${pkg===p[0]}"><b>${p[0]}</b><em>${p[1]}</em><small>${p[2]}</small></button>`).join('')}</div>`,
+ 5:()=>submitted?`<h3>Case SL-1042 submitted</h3><p class="sub">SmileLine will upload a treatment plan for your approval.</p><ol class="tl"><li class="done"><i></i>Submitted<time>Today, 10:42</time></li><li class="now"><i></i>In review by SmileLine<time>Now</time></li><li><i></i>Plan ready for approval<time>Est. 3 days</time></li><li><i></i>In production<time></time></li><li><i></i>Shipped<time></time></li></ol>`:`<h3>Review and submit</h3><p class="sub">Check the case before sending.</p><table><tr><th>Patient</th><td>Ali Hassan</td></tr><tr><th>Diagnosis</th><td>Crowding, spacing</td></tr><tr><th>Records</th><td>${files.length} files${files.some(f=>f[0].includes('xray'))?'':' (X-ray missing)'}</td></tr><tr><th>Goals</th><td>${goals.join(', ')}</td></tr><tr><th>Package</th><td>${pkg} · ${pkgs.find(p=>p[0]===pkg)[1]}</td></tr></table>`
+};
+const drawSteps=()=>{ $('#steps').innerHTML=steps.map((s,i)=>`<li><button class="${i<cur||(submitted&&i===5)?'done':''} ${i===cur?'on':''}" data-i="${i}"><span>${i<cur||(submitted&&i===5)?'✓':i+1}</span><em>${s}</em></button></li>`).join('');
+ const last=cur===5;
+ $('#stepBody').innerHTML=bodies[cur]()+`<div class="foot"><span class="saved">${submitted&&last?'':'Draft saved automatically'}</span><span style="display:flex;gap:8px"><button class="mini" id="back" ${cur===0?'disabled':''}>Back</button>${submitted&&last?'<button class="btn" id="again">Start a new case</button>':`<button class="btn" id="next">${last?'Submit case':'Continue'}</button>`}</span></div>`;};
+drawSteps();
+$('#v-doc').addEventListener('click',e=>{
+ const b=e.target.closest('button'); if(!b)return;
+ if(b.dataset.i){cur=+b.dataset.i;drawSteps();return}
+ if(b.id==='next'){if(cur===5){submitted=true;cases.unshift(["SL-1042","Dr Sara Khan","Ali Hassan","Moderate","Submitted","new"]);drawBrand()}else cur++;drawSteps();return}
+ if(b.id==='back'){cur=Math.max(0,cur-1);drawSteps();return}
+ if(b.id==='again'){submitted=false;cur=0;drawSteps();return}
+ if(b.id==='addx'){files.push(["panoramic_xray.jpg","2.1 MB",100]);drawSteps();return}
+ if(b.dataset.p){pkg=b.dataset.p;drawSteps();return}
+ if(b.classList.contains('goal')){const t=b.textContent;goals=goals.includes(t)?goals.filter(g=>g!==t):[...goals,t];drawSteps();return}
+ if(b.classList.contains('chip')){b.setAttribute('aria-pressed',b.getAttribute('aria-pressed')!=='true')}
+});
+
+/* brand dashboard */
+const cases=[["SL-1039","Dr Omar Aziz","Mina Lee","Comprehensive","Plan ready","ready"],["SL-1037","Dr Sara Khan","Daniel Ross","Moderate","In production","prod"],["SL-1035","Dr Priya Nair","Hana Yusuf","Lite","Shipped","ship"],["SL-1034","Dr Omar Aziz","Leo Tan","Moderate","In production","prod"]];
+const flow={"Submitted":["Plan ready","ready"],"Plan ready":["In production","prod"],"In production":["Shipped","ship"]};
+const act={"Submitted":"Upload plan","Plan ready":"Mark approved","In production":"Mark shipped"};
+let bpage=0;
+const drawBrand=()=>{
+ $('#bnav').innerHTML=["Dashboard","Invoices"].map((s,i)=>`<li><button class="${i===bpage?'on':''}" data-b="${i}"><span>${i+1}</span><em>${s}</em></button></li>`).join('');
+ const count=k=>cases.filter(c=>c[4]===k).length;
+ if(bpage===0){$('#brandBody').innerHTML=`<h3>Good morning, SmileLine</h3><p class="sub">This month at a glance.</p><div class="kpis"><div class="kpi"><b>${cases.length+28}</b><span>Cases this month</span></div><div class="kpi"><b>${count("Submitted")+count("Plan ready")}</b><span>Need your action</span></div><div class="kpi"><b>$28,800</b><span>Invoiced</span></div><div class="kpi"><b style="color:var(--coral)">$3,600</b><span>Overdue</span></div></div><div class="scroll"><table><thead><tr><th>Case</th><th>Dentist</th><th>Patient</th><th>Package</th><th>Status</th><th></th></tr></thead><tbody>${cases.map((c,i)=>`<tr><td>${c[0]}</td><td>${c[1]}</td><td>${c[2]}</td><td>${c[3]}</td><td><span class="st ${c[5]}">${c[4]}</span></td><td>${act[c[4]]?`<button class="mini" data-c="${i}">${act[c[4]]}</button>`:''}</td></tr>`).join('')}</tbody></table></div>`}
+ else{$('#brandBody').innerHTML=`<h3>Invoices</h3><p class="sub">Created automatically when a dentist approves a plan.</p><div class="scroll"><table><thead><tr><th>Invoice</th><th>Dentist</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody><tr><td>INV-2207</td><td>Dr Omar Aziz</td><td>$1,400</td><td>28 Nov</td><td><span class="st">Sent</span></td></tr><tr><td>INV-2204</td><td>Dr Sara Khan</td><td>$900</td><td>21 Nov</td><td><span class="st ship">Paid</span></td></tr><tr><td>INV-2198</td><td>Dr Priya Nair</td><td>$600</td><td>12 Nov</td><td><span class="st new">Overdue</span></td></tr></tbody></table></div>`}
+};
+drawBrand();
+$('#v-brand').addEventListener('click',e=>{
+ const b=e.target.closest('button'); if(!b)return;
+ if(b.dataset.b){bpage=+b.dataset.b;drawBrand();return}
+ if(b.dataset.c){const c=cases[+b.dataset.c];const n=flow[c[4]];if(n){c[4]=n[0];c[5]=n[1]}drawBrand()}
+});
+const tab=w=>{const d=w==='doc';$('#t-doc').setAttribute('aria-selected',d);$('#t-brand').setAttribute('aria-selected',!d);$('#v-doc').hidden=!d;$('#v-brand').hidden=d};
+$('#t-doc').addEventListener('click',()=>tab('doc'));
+$('#t-brand').addEventListener('click',()=>tab('brand'));
+}
+</script>
+<script>
+(function(){var b=document.getElementById('copyMail');if(!b)return;b.addEventListener('click',function(){var t='waheedashraf06@gmail.com';function ok(){b.textContent='Copied';setTimeout(function(){b.textContent='Copy email'},1800)}
+try{navigator.clipboard.writeText(t).then(ok,fb)}catch(e){fb()}
+function fb(){var i=document.createElement('textarea');i.value=t;document.body.appendChild(i);i.select();try{document.execCommand('copy');ok()}catch(e){b.textContent=t}i.remove()}});})();
+</script>
+</body>
+</html>
