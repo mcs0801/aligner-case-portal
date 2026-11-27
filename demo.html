@@ -171,6 +171,8 @@ td.id{font-weight:700}
 @media(max-width:560px){.grid2{grid-template-columns:minmax(0,1fr)}dl.rv{grid-template-columns:minmax(0,1fr)}dl.rv dt{border-bottom:0;padding-bottom:0}}
 @media(prefers-reduced-motion:reduce){.toast{transition:none}}
 </style>
+<meta name="robots" content="noindex">
+<script src="track.js" defer></script>
 </head>
 <body>
 <div class="demobar">
@@ -204,12 +206,23 @@ const ic={
  users:'<path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM21 19v-1a4 4 0 0 0-3-3.9M15 4.1a3 3 0 0 1 0 5.8"/>'
 };
 const svg=n=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ic[n]}</svg>`;
-const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2200)};
+const toast=t=>{const e=$('#toast');e.textContent=L(t);e.classList.add('show');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('show'),2200)};
+
+/* personalised demo: ?brand=Name&color=hex6&cur=GBP&region=uk */
+const Q=new URLSearchParams(location.search);
+const P={brand:(Q.get('brand')||'').replace(/[^\w &.'-]/g,'').trim().slice(0,28),color:/^[0-9a-f]{6}$/i.test(Q.get('color')||'')?'#'+Q.get('color'):null,cur:(Q.get('cur')||'USD').toUpperCase(),region:(Q.get('region')||'').toLowerCase(),domain:(Q.get('domain')||'').toLowerCase().replace(/[^a-z0-9.-]/g,'').slice(0,40)};
+const CUR={USD:['$',1],GBP:['£',.8],EUR:['€',.92],AED:['AED ',3.67],MYR:['RM',4.5],SGD:['S$',1.35]}[P.cur]||['$',1];
+const REG={
+ uk:[["Dr Sara Khan","Dr Emma Clarke"],["Bright Dental, Dubai","Kensington Dental, London"],["Dr Omar Aziz","Dr James Patel"],["Smile Studio, Abu Dhabi","Smile Studio, Manchester"],["Dr Priya Nair","Dr Priya Shah"],["Pearl Clinic, Sharjah","Pearl Dental, Leeds"],["Dr James Hart","Dr Tom Hughes"],["Hart Orthodontics, London","Hughes Orthodontics, Bristol"],["<i>SK</i>","<i>EC</i>"]],
+ sea:[["Dr Sara Khan","Dr Mei Ling Tan"],["Bright Dental, Dubai","Bright Dental, Kuala Lumpur"],["Dr Omar Aziz","Dr Arif Rahman"],["Smile Studio, Abu Dhabi","Smile Studio, Singapore"],["Dr Priya Nair","Dr Priya Nair"],["Pearl Clinic, Sharjah","Pearl Clinic, Penang"],["Dr James Hart","Dr Daniel Lim"],["Hart Orthodontics, London","Lim Orthodontics, Johor Bahru"],["<i>SK</i>","<i>MT</i>"]]
+}[P.region]||[];
+const L=s=>REG.reduce((a,[f,t])=>a.split(f).join(t),String(s));
+const SLUG=P.brand.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 
 /* shared sample data */
-let brand={name:'SmileLine',acc:'#6d4aff'};
+let brand={name:P.brand||'SmileLine',acc:P.color||'#6d4aff'};
 const pkgs=[["Lite",600,"Up to 10 aligners per arch"],["Moderate",900,"Up to 20 aligners per arch"],["Comprehensive",1400,"Unlimited aligners, 2 refinements"]];
-const money=n=>'$'+n.toLocaleString('en-US');
+const money=n=>CUR[0]+(Math.round(n*CUR[1]/10)*10).toLocaleString('en-US');
 const cases=[
  {id:"SL-1041",doc:"Dr Sara Khan",pt:"Ayesha Malik",pkg:"Lite",st:"Submitted",date:"20 Nov"},
  {id:"SL-1039",doc:"Dr Omar Aziz",pt:"Mina Lee",pkg:"Comprehensive",st:"Plan ready",date:"18 Nov"},
@@ -241,7 +254,7 @@ const drawNav=()=>{
  $('#nav').innerHTML=navs[role].map(([k,l,i])=>{
   const n=k==='inv'&&due?due:k==='bcases'&&act?act:0;
   return `<li><button data-p="${k}" ${page===k?'aria-current="page"':''}>${svg(i)}${l}${n?`<span class="count">${n}</span>`:''}</button></li>`}).join('');
- $('#who').innerHTML=role==='doc'?`<i>SK</i><div><b>Dr Sara Khan</b><small>Bright Dental, Dubai</small></div>`:`<i>AM</i><div><b>Adam Morgan</b><small>${brand.name} · Admin</small></div>`;
+ $('#who').innerHTML=L(role==='doc'?`<i>SK</i><div><b>Dr Sara Khan</b><small>Bright Dental, Dubai</small></div>`:`<i>AM</i><div><b>Adam Morgan</b><small>${brand.name} · Admin</small></div>`);
 };
 
 /* ---- dentist: new case wizard ---- */
@@ -295,19 +308,19 @@ const pDentists=()=>`<div class="ph"><div><h1>Dentists</h1><p>Dentists you've in
  <tr><td class="id">Dr James Hart</td><td>Hart Orthodontics, London</td><td>0</td><td>–</td><td><span class="st">Invited</span></td></tr></tbody></table></div>`;
 const pBInv=()=>`<div class="ph"><div><h1>Invoices</h1><p>Created automatically when a dentist approves a treatment plan.</p></div><button class="btn ghost" id="remind">Send reminders</button></div>
  <div class="card scroll"><table><thead><tr><th>Invoice</th><th>Dentist</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody>${invoices.map(i=>`<tr><td class="id">${i.id}</td><td>${i.doc}</td><td>${money(i.amt)}</td><td>${i.due}</td><td>${pill(i.st)}</td></tr>`).join('')}</tbody></table></div>`;
-const colors=[['#6d4aff','Violet'],['#0b7a78','Teal'],['#1d5fbf','Blue'],['#d6336c','Rose'],['#0b1f3a','Navy'],['#c2410c','Amber']];
+const colors=[...(P.color&&!['#6d4aff','#0b7a78','#1d5fbf','#d6336c','#0b1f3a','#c2410c'].includes(P.color.toLowerCase())?[[P.color,'Your brand colour']]:[]),['#6d4aff','Violet'],['#0b7a78','Teal'],['#1d5fbf','Blue'],['#d6336c','Rose'],['#0b1f3a','Navy'],['#c2410c','Amber']];
 const pBrand=()=>`<div class="ph"><div><h1>Branding</h1><p>Make the portal look like your brand. Changes apply to every dentist.</p></div></div>
  <div class="cols"><div class="card pad" style="display:grid;gap:18px"><label class="f">Brand name<input id="bn" value="${brand.name}" maxlength="24"></label>
  <div class="f" style="display:grid;gap:8px;font-size:13.5px;font-weight:600">Brand colour<div class="swatches">${colors.map(([c,n])=>`<button class="sw" style="background:${c}" data-c="${c}" aria-label="${n}" aria-pressed="${brand.acc===c}"></button>`).join('')}</div></div>
- <label class="f">Portal address<input id="addr" value="portal.${brand.name.toLowerCase().replace(/[^a-z0-9]/g,'')||'yourbrand'}.com" readonly></label>
+ <label class="f">Portal address<input id="addr" value="portal.${P.domain&&brand.name===P.brand?P.domain:(brand.name.toLowerCase().replace(/[^a-z0-9]/g,'')||'yourbrand')+'.com'}" readonly></label>
  <p class="tip" style="margin:0">Try it: pick a colour or rename the brand and watch the whole portal update.</p></div>
  <div class="preview card"><div class="top"><i>${brand.name[0]||'B'}</i>${brand.name} Doctor Portal</div><div class="body"><span>What your dentists see when they sign in.</span><span><button class="btn sm">Submit a new case</button></span></div></div></div>`;
 
 const pages={new:pNew,cases:pCases,inv:pInv,dash:pDash,bcases:pBCases,dentists:pDentists,binv:pBInv,brand:pBrand};
 const label=()=>document.querySelectorAll('#main table').forEach(t=>{const h=[...t.querySelectorAll('thead th')].map(x=>x.textContent.trim());t.querySelectorAll('tbody tr').forEach(r=>[...r.children].forEach((c,i)=>c.setAttribute('data-label',h[i]||'')))});
-const render=()=>{drawNav();$('#main').innerHTML=pages[page]();label();const a=document.querySelector('#nav [aria-current]');if(a&&innerWidth<=820){const n=$('#nav');n.scrollLeft=a.offsetLeft-n.offsetLeft-12}document.title=`${brand.name} portal · Live demo`};
+const render=()=>{drawNav();$('#main').innerHTML=L(pages[page]());label();const a=document.querySelector('#nav [aria-current]');if(a&&innerWidth<=820){const n=$('#nav');n.scrollLeft=a.offsetLeft-n.offsetLeft-12}document.title=`${brand.name} portal · Live demo`};
 const applyBrand=()=>{document.documentElement.style.setProperty('--acc',brand.acc);$('#bName').textContent=brand.name||'Your brand';$('#bInit').textContent=(brand.name||'B')[0].toUpperCase()};
-const setRole=r=>{role=r;page=r==='doc'?'new':'dash';$('#r-doc').setAttribute('aria-pressed',r==='doc');$('#r-brand').setAttribute('aria-pressed',r==='brand');render();window.scrollTo(0,0)};
+const setRole=r=>{role=r;try{if(r==='brand'&&window.goatcounter&&goatcounter.count)goatcounter.count({path:'event/brand-admin'+(SLUG?'/'+SLUG:''),title:'Opened brand admin',event:true})}catch(e){}page=r==='doc'?'new':'dash';$('#r-doc').setAttribute('aria-pressed',r==='doc');$('#r-brand').setAttribute('aria-pressed',r==='brand');render();window.scrollTo(0,0)};
 $('#r-doc').onclick=()=>setRole('doc');$('#r-brand').onclick=()=>setRole('brand');
 
 document.addEventListener('click',e=>{
@@ -335,9 +348,10 @@ document.addEventListener('click',e=>{
 });
 document.addEventListener('input',e=>{
  const k=e.target.dataset.k;if(k){w[k]=e.target.value;return}
- if(e.target.id==='bn'){brand.name=e.target.value.trim()||'Your brand';applyBrand();const pv=document.querySelector('.preview .top');if(pv)pv.innerHTML=`<i>${brand.name[0]}</i>${brand.name} Doctor Portal`;const a=document.getElementById('addr');if(a)a.value='portal.'+(brand.name.toLowerCase().replace(/[^a-z0-9]/g,'')||'yourbrand')+'.com';drawNav()}
+ if(e.target.id==='bn'){brand.name=e.target.value.trim()||'Your brand';applyBrand();const pv=document.querySelector('.preview .top');if(pv)pv.innerHTML=`<i>${brand.name[0]}</i>${brand.name} Doctor Portal`;const a=document.getElementById('addr');if(a)a.value='portal.'+(P.domain&&brand.name===P.brand?P.domain:(brand.name.toLowerCase().replace(/[^a-z0-9]/g,'')||'yourbrand')+'.com');drawNav()}
 });
 document.addEventListener('change',e=>{if(e.target.id==='bn')render()});
+if(P.brand){const h=document.querySelector('.demobar .hide-s'),m=document.querySelector('.demobar .show-s');if(h)h.textContent=` · Prepared for ${P.brand}. Sample patients, nothing you enter is saved.`;if(m)m.textContent=` · For ${P.brand}`}
 applyBrand();render();
 }
 </script>
